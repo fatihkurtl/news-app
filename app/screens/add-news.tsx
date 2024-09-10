@@ -9,11 +9,14 @@ import {
   Text, 
   TextArea,
   Select,
-  styled
+  styled,
+  Adapt,
+  Sheet
 } from "tamagui";
+import { ChevronDown, ChevronUp } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 
-const categories = ['Teknoloji', 'Ekonomi', 'Spor', 'Sağlık', 'Kültür'];
+const categories = ['Teknoloji', 'Ekonomi', 'Spor', 'Sağlık', 'Kültür', 'Gündem'];
 
 const AppContainer = styled(YStack, {
   flex: 1,
@@ -31,9 +34,7 @@ export default function AddNewsPage() {
   const router = useRouter();
 
   const handleSubmit = () => {
-    // Burada form verilerini işleyebilir ve API'ye gönderebilirsiniz
     console.log({ title, description, category, date, imageUrl });
-    // İşlem tamamlandıktan sonra haber listesi sayfasına dönebilirsiniz
     router.push('/screens/news');
   };
 
@@ -55,15 +56,43 @@ export default function AddNewsPage() {
               numberOfLines={4}
             />
             <Select value={category} onValueChange={setCategory}>
-              <Select.Trigger>
+              <Select.Trigger width="100%" iconAfter={ChevronDown}>
                 <Select.Value placeholder="Kategori Seçin" />
               </Select.Trigger>
-              <Select.Content>
-                {categories.map((category, index) => (
-                  <Select.Item key={category} value={category} index={index}>
-                    <Select.ItemText>{category}</Select.ItemText>
-                  </Select.Item>
-                ))}
+
+              <Adapt when="sm" platform="touch">
+                <Sheet modal dismissOnSnapToBottom>
+                  <Sheet.Frame>
+                    <Sheet.ScrollView>
+                      <Adapt.Contents />
+                    </Sheet.ScrollView>
+                  </Sheet.Frame>
+                  <Sheet.Overlay />
+                </Sheet>
+              </Adapt>
+
+              <Select.Content zIndex={200000}>
+                <Select.ScrollUpButton alignItems="center" justifyContent="center" position="relative" width="100%" height="$3">
+                  <ChevronUp size="$1" />
+                </Select.ScrollUpButton>
+
+                <Select.Viewport minWidth={200}>
+                  <Select.Group>
+                    <Select.Label>Kategoriler</Select.Label>
+                    {categories.map((cat, index) => (
+                      <Select.Item key={cat} index={index} value={cat}>
+                        <Select.ItemText>{cat}</Select.ItemText>
+                        <Select.ItemIndicator marginLeft="auto">
+                          <Text>✓</Text>
+                        </Select.ItemIndicator>
+                      </Select.Item>
+                    ))}
+                  </Select.Group>
+                </Select.Viewport>
+
+                <Select.ScrollDownButton alignItems="center" justifyContent="center" position="relative" width="100%" height="$3">
+                  <ChevronDown size="$1" />
+                </Select.ScrollDownButton>
               </Select.Content>
             </Select>
             <XStack alignItems="center">
