@@ -1,8 +1,10 @@
+import { Timestamp } from "@/firebase";
+
 export interface NewsItem {
-    id: number;
+    id: number | string;
     title: string;
     category: string;
-    image: string;
-    date: string;
+    imageUrl: string;
+    date: Timestamp | Date;
     description: string;
   }

@@ -1,42 +1,10 @@
-import React from 'react';
-import { SafeAreaView } from 'react-native';
-import {
-  ScrollView,
-  YStack,
-  Text,
-  styled,
-  Button
-} from "tamagui";
+import React, { useState, useEffect } from "react";
+import { Alert, SafeAreaView } from "react-native";
+import { ScrollView, YStack, Text, styled, Button } from "tamagui";
 import { NewsCard } from "@/components/news/card";
 import type { NewsItem } from "@/interfaces/news_item";
-import { useRouter } from 'expo-router';
-
-const newsData: NewsItem[] = [
-  {
-    id: 1,
-    title: "Yeni Teknoloji Gelişmeleri",
-    category: "Teknoloji",
-    image: "https://picsum.photos/200/100",
-    date: "2023-05-15",
-    description: "Teknoloji dünyasındaki son gelişmeler ve yenilikler.",
-  },
-  {
-    id: 2,
-    title: "Ekonomi Haberleri",
-    category: "Ekonomi",
-    image: "https://picsum.photos/200/100",
-    date: "2023-05-14",
-    description: "Güncel ekonomi haberleri ve piyasa analizleri.",
-  },
-  {
-    id: 3,
-    title: "Spor Dünyası",
-    category: "Spor",
-    image: "https://picsum.photos/200/100",
-    date: "2023-05-13",
-    description: "Spor dünyasından son dakika haberleri ve maç sonuçları.",
-  },
-];
+import { useRouter } from "expo-router";
+import { getDocs, collection, db } from "@/firebase";
 
 const AppContainer = styled(YStack, {
   flex: 1,
@@ -46,14 +14,38 @@ const AppContainer = styled(YStack, {
 export default function NewsPage() {
   const router = useRouter();
 
+  const [newsData, setNewsData] = useState<NewsItem[]>([]);
+
+  const getNewsData = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "news"));
+      const fetchedNews: NewsItem[] = [];
+      querySnapshot.forEach((doc) => {
+        fetchedNews.push({ id: doc.id, ...doc.data() } as NewsItem);
+      });
+      setNewsData(fetchedNews);
+    } catch (error) {
+      Alert.alert("Hata", "Haberler alınırken bir hata oluştu");
+    }
+  };
+
+  useEffect(() => {
+    getNewsData();
+  }, []);
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
       <AppContainer>
-        <Text fontSize="$6" fontWeight="bold" color="$color" textAlign="center" padding="$4">
+        {/* <Text
+          fontSize="$6"
+          fontWeight="bold"
+          color="$color"
+          textAlign="center"
+          padding="$4"
+        >
           Haberler
-        </Text>
-        <Button 
-          onPress={() => router.push('/screens/add-news' as any)}
+        </Text> */}
+        <Button
+          onPress={() => router.push("/screens/add-news" as any)}
           marginBottom="$4"
         >
           Haber Ekle
@@ -66,6 +58,5 @@ export default function NewsPage() {
           </YStack>
         </ScrollView>
       </AppContainer>
-    </SafeAreaView>
   );
 }
