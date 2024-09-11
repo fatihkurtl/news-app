@@ -1,4 +1,4 @@
-# Welcome to your Expo app 👋
+# React Native News App With Expo, Tamagui, Firestore DB 👋
 
 ![image](https://github.com/user-attachments/assets/c2a7a634-3525-4841-9320-237d3b51ac1a)
 ![image](https://github.com/user-attachments/assets/46555870-29d0-43c1-8785-2356f2947cfc)
