@@ -11,10 +11,7 @@ import {
   Sheet,
   Adapt,
 } from "tamagui";
-import { NewsCard } from "@/components/news/card";
-import type { NewsItem } from "@/interfaces/news_item";
 import { useRouter } from "expo-router";
-import { getDocs, collection, db, Timestamp } from "@/firebase";
 import {
   Check,
   PlusCircle,
@@ -28,6 +25,9 @@ import {
   isSameMonth,
   isSameYear,
 } from "date-fns";
+import { NewsCard } from "@/components/news/card";
+import type { NewsItem } from "@/interfaces/news_item";
+import { getDocs, collection, db, Timestamp } from "@/firebase";
 
 const AppContainer = styled(YStack, {
   flex: 1,
@@ -53,7 +53,7 @@ export default function NewsPage() {
         fetchedNews.push({
           id: doc.id,
           ...data,
-          date: data.date instanceof Timestamp ? data.date : data.date
+          date: data.date instanceof Timestamp ? data.date : data.date,
         } as NewsItem);
       });
       setNewsData(fetchedNews);
@@ -75,24 +75,36 @@ export default function NewsPage() {
     if (dateInput instanceof Timestamp) {
       return dateInput.toDate();
     }
-  
+
     if (typeof dateInput !== "string") {
-      console.error("Expected a string or Timestamp for dateInput, but got:", typeof dateInput);
+      console.error(
+        "Expected a string or Timestamp for dateInput, but got:",
+        typeof dateInput
+      );
       return new Date();
     }
-  
-    const match = dateInput.match(/(\w+) (\d+), (\d+) at (\d+):(\d+):(\d+) (AM|PM) UTC([+-]\d+)/);
+
+    const match = dateInput.match(
+      /(\w+) (\d+), (\d+) at (\d+):(\d+):(\d+) (AM|PM) UTC([+-]\d+)/
+    );
     if (!match) return new Date();
-  
+
     const [, month, day, year, hours, minutes, seconds, period, offset] = match;
-  
+
     const monthIndex = new Date(Date.parse(month + " 1, 2021")).getMonth();
-  
+
     let hour24 = parseInt(hours);
     if (period === "PM" && hour24 < 12) hour24 += 12;
     if (period === "AM" && hour24 === 12) hour24 = 0;
-  
-    return new Date(year, monthIndex, parseInt(day), hour24, parseInt(minutes), parseInt(seconds));
+
+    return new Date(
+    //   year,
+      monthIndex,
+      parseInt(day),
+      hour24,
+      parseInt(minutes),
+      parseInt(seconds)
+    );
   };
 
   const filterNews = () => {
@@ -131,139 +143,139 @@ export default function NewsPage() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-    <AppContainer>
-      <XStack justifyContent="space-around" alignItems="center"  padding="$4">
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <Select.Trigger width={150} iconAfter={ChevronDown}>
-            <Select.Value placeholder="Kategori" />
-          </Select.Trigger>
+      <AppContainer>
+        <XStack justifyContent="space-around" alignItems="center" padding="$4">
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select.Trigger width={150} iconAfter={ChevronDown}>
+              <Select.Value placeholder="Kategori" />
+            </Select.Trigger>
 
-          <Adapt when="sm" platform="touch">
-            <Sheet modal dismissOnSnapToBottom>
-              <Sheet.Frame>
-                <Sheet.ScrollView>
-                  <Adapt.Contents />
-                </Sheet.ScrollView>
-              </Sheet.Frame>
-              <Sheet.Overlay />
-            </Sheet>
-          </Adapt>
+            <Adapt when="sm" platform="touch">
+              <Sheet modal dismissOnSnapToBottom>
+                <Sheet.Frame>
+                  <Sheet.ScrollView>
+                    <Adapt.Contents />
+                  </Sheet.ScrollView>
+                </Sheet.Frame>
+                <Sheet.Overlay />
+              </Sheet>
+            </Adapt>
 
-          <Select.Content>
-            <Select.ScrollUpButton
-              ai="center"
-              jc="center"
-              pos="relative"
-              w="100%"
-              h="$3"
-            >
-              <ChevronDown size={20} />
-            </Select.ScrollUpButton>
+            <Select.Content>
+              <Select.ScrollUpButton
+                ai="center"
+                jc="center"
+                pos="relative"
+                w="100%"
+                h="$3"
+              >
+                <ChevronDown size={20} />
+              </Select.ScrollUpButton>
 
-            <Select.Viewport minWidth={200}>
-              <Select.Group>
-                {categories.map((category, index) => (
-                  <Select.Item key={category} index={index} value={category}>
-                    <Select.ItemText>{category}</Select.ItemText>
-                    <Select.ItemIndicator marginLeft="auto">
-                      <Check size={16} />
-                    </Select.ItemIndicator>
-                  </Select.Item>
-                ))}
-              </Select.Group>
-            </Select.Viewport>
+              <Select.Viewport minWidth={200}>
+                <Select.Group>
+                  {categories.map((category, index) => (
+                    <Select.Item key={category} index={index} value={category}>
+                      <Select.ItemText>{category}</Select.ItemText>
+                      <Select.ItemIndicator marginLeft="auto">
+                        <Check size={16} />
+                      </Select.ItemIndicator>
+                    </Select.Item>
+                  ))}
+                </Select.Group>
+              </Select.Viewport>
 
-            <Select.ScrollDownButton
-              ai="center"
-              jc="center"
-              pos="relative"
-              w="100%"
-              h="$3"
-            >
-              <ChevronDown size={20} />
-            </Select.ScrollDownButton>
-          </Select.Content>
-        </Select>
+              <Select.ScrollDownButton
+                ai="center"
+                jc="center"
+                pos="relative"
+                w="100%"
+                h="$3"
+              >
+                <ChevronDown size={20} />
+              </Select.ScrollDownButton>
+            </Select.Content>
+          </Select>
 
-        <Select
-          value={selectedDateFilter}
-          onValueChange={setSelectedDateFilter}
-        >
-          <Select.Trigger width={150} iconAfter={Calendar}>
-            <Select.Value placeholder="Tarih" />
-          </Select.Trigger>
+          <Select
+            value={selectedDateFilter}
+            onValueChange={setSelectedDateFilter}
+          >
+            <Select.Trigger width={150} iconAfter={Calendar}>
+              <Select.Value placeholder="Tarih" />
+            </Select.Trigger>
 
-          <Adapt when="sm" platform="touch">
-            <Sheet modal dismissOnSnapToBottom>
-              <Sheet.Frame>
-                <Sheet.ScrollView>
-                  <Adapt.Contents />
-                </Sheet.ScrollView>
-              </Sheet.Frame>
-              <Sheet.Overlay />
-            </Sheet>
-          </Adapt>
+            <Adapt when="sm" platform="touch">
+              <Sheet modal dismissOnSnapToBottom>
+                <Sheet.Frame>
+                  <Sheet.ScrollView>
+                    <Adapt.Contents />
+                  </Sheet.ScrollView>
+                </Sheet.Frame>
+                <Sheet.Overlay />
+              </Sheet>
+            </Adapt>
 
-          <Select.Content>
-            <Select.ScrollUpButton
-              ai="center"
-              jc="center"
-              pos="relative"
-              w="100%"
-              h="$3"
-            >
-              <ChevronDown size={20} />
-            </Select.ScrollUpButton>
+            <Select.Content>
+              <Select.ScrollUpButton
+                ai="center"
+                jc="center"
+                pos="relative"
+                w="100%"
+                h="$3"
+              >
+                <ChevronDown size={20} />
+              </Select.ScrollUpButton>
 
-            <Select.Viewport minWidth={200}>
-              <Select.Group>
-                {dateFilters.map((filter, index) => (
-                  <Select.Item key={filter} index={index} value={filter}>
-                    <Select.ItemText>{filter}</Select.ItemText>
-                    <Select.ItemIndicator marginLeft="auto">
-                      <Check size={16} />
-                    </Select.ItemIndicator>
-                  </Select.Item>
-                ))}
-              </Select.Group>
-            </Select.Viewport>
+              <Select.Viewport minWidth={200}>
+                <Select.Group>
+                  {dateFilters.map((filter, index) => (
+                    <Select.Item key={filter} index={index} value={filter}>
+                      <Select.ItemText>{filter}</Select.ItemText>
+                      <Select.ItemIndicator marginLeft="auto">
+                        <Check size={16} />
+                      </Select.ItemIndicator>
+                    </Select.Item>
+                  ))}
+                </Select.Group>
+              </Select.Viewport>
 
-            <Select.ScrollDownButton
-              ai="center"
-              jc="center"
-              pos="relative"
-              w="100%"
-              h="$3"
-            >
-              <ChevronDown size={20} />
-            </Select.ScrollDownButton>
-          </Select.Content>
-        </Select>
+              <Select.ScrollDownButton
+                ai="center"
+                jc="center"
+                pos="relative"
+                w="100%"
+                h="$3"
+              >
+                <ChevronDown size={20} />
+              </Select.ScrollDownButton>
+            </Select.Content>
+          </Select>
 
-        <Button
-          onPress={() => router.push("/screens/add-news" as any)}
-          themeInverse
-          iconAfter={PlusCircle}
-          width={50}
-        >
-          {/* Haber Ekle */}
-        </Button>
-      </XStack>
+          <Button
+            onPress={() => router.push("/screens/add-news" as any)}
+            themeInverse
+            iconAfter={PlusCircle}
+            width={50}
+          >
+            {/* Haber Ekle */}
+          </Button>
+        </XStack>
 
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <YStack space="$4">
-          {filteredNews.length < 1 ? (
-            <Text color="$color" fontSize="$4" textAlign="center">
-              Hiç Haber Bulunamadı !
-            </Text>
-          ) : (
-            filteredNews.map((news, index) => (
-              <NewsCard key={news.id} {...news} />
-            ))
-          )}
-        </YStack>
-      </ScrollView>
-    </AppContainer>
+        <ScrollView contentContainerStyle={{ padding: 16 }}>
+          <YStack space="$4">
+            {filteredNews.length < 1 ? (
+              <Text color="$color" fontSize="$4" textAlign="center">
+                Hiç Haber Bulunamadı !
+              </Text>
+            ) : (
+              filteredNews.map((news, index) => (
+                <NewsCard key={news.id} {...news} />
+              ))
+            )}
+          </YStack>
+        </ScrollView>
+      </AppContainer>
     </SafeAreaView>
   );
 }
