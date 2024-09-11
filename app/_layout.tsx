@@ -6,7 +6,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { createTamagui, TamaguiProvider, Theme } from "tamagui";
 import { config } from "@tamagui/config/v3";
 import { Stack } from "expo-router";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, ScrollView } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -43,6 +43,10 @@ export default function RootLayout() {
             <Stack.Screen
               name="screens/news"
               options={{ title: "Haberler" }}
+            />
+            <Stack.Screen
+              name="screens/news-detail"
+              options={{ title: "Haber Detayı" }}
             />
             <Stack.Screen
               name="screens/add-news"

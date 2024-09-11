@@ -5,6 +5,6 @@ export interface NewsItem {
     title: string;
     category: string;
     imageUrl: string;
-    date: Timestamp | Date;
+    date: string | Timestamp;
     description: string;
   }

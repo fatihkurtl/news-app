@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, Alert, ScrollView } from "react-native";
+import { Alert, ScrollView } from "react-native";
 import {
   Form,
   YStack,
@@ -14,7 +14,7 @@ import {
   Sheet,
 } from "tamagui";
 import { ChevronDown } from "@tamagui/lucide-icons";
-import CategoryMenu from "../components/addnews/category-menu";
+import CategoryMenu from "../../components/addnews/category-menu";
 import { useRouter } from "expo-router";
 import { addDoc, collection, db, Timestamp } from "@/firebase";
 
@@ -63,7 +63,6 @@ export default function AddNewsPage() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <AppContainer>
         <Text fontSize="$6" fontWeight="bold" marginBottom="$4">
@@ -116,6 +115,5 @@ export default function AddNewsPage() {
         </Form>
       </AppContainer>
       </ScrollView>
-    </SafeAreaView>
   );
 }
